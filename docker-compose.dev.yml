@@ -1,0 +1,33 @@
+version: '2'
+
+services:
+    mysql:
+        image: mysql:latest
+        expose:
+            - "3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_USER: db
+            MYSQL_PASSWORD: db
+            MYSQL_DATABASE: database
+
+    php:
+        build: ./php
+        image: php
+        expose:
+            - "9000"
+        links:
+            - mysql:database
+        volumes:
+            - ./symfony:/var/www/symfony:rw
+    
+    nginx:
+        build: ./nginx
+        image: nginx
+        ports:
+            - "80:80"
+            - "443:443"
+        links:
+            - php:php
+        volumes:
+            - ./symfony:/var/www/symfony:ro
